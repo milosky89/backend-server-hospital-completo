@@ -30,10 +30,10 @@ async function verify(token) {
 
     return {
         nombre: payload.name,
-        email: payload,
-        email,
+        email: payload.email,
         img: payload.picture,
-        google: true
+        google: true,
+
     }
 }
 
@@ -46,13 +46,12 @@ app.post('/google', async(req, res) => {
         .catch(e => {
             return res.status(403).json({
                 ok: false,
-                mensaje: 'Token no valido',
-                errors: err
+                mensaje: 'Token no valido'
+
             });
-        })
+        });
 
     Usuario.findOne({ email: googleUser.email }, (err, usuarioDB) => {
-
 
         if (err) {
             return res.status(500).json({
@@ -67,7 +66,7 @@ app.post('/google', async(req, res) => {
             if (usuarioDB.google === false) {
                 return res.status(400).json({
                     ok: true,
-                    mensaje: 'Debe autemticarse normalmente',
+                    mensaje: 'Debe autenticarse normalmente',
 
                 });
             } else {
@@ -80,16 +79,16 @@ app.post('/google', async(req, res) => {
                     id: usuarioDB._id
                 });
             }
+
         } else {
             // El usuario no existe.. hay que crearlo
             var usuario = new Usuario();
 
-            usuario.nombre = payload.nombre;
-            usuario.email = payload.email;
-            usuario.password = ':)';
-            usuario.img = payload.img;
+            usuario.nombre = googleUser.nombre;
+            usuario.email = googleUser.email;
+            usuario.img = googleUser.img;
             usuario.google = true;
-
+            usuario.password = ':)';
 
             usuario.save((err, usuarioDB) => {
 
